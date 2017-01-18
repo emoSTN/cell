@@ -1,7 +1,7 @@
 import pygame
 import random
 
-import test1
+import grid
 import cevent
 
 
@@ -16,15 +16,29 @@ class App(cevent.CEvent):
         self.display_surface = pygame.display.set_mode(self.size,
                                                        pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
         self.running = True
-        self.grid = test1.Grid(self.display_surface, (255, 0, 0), (0, 255, 0), 0, 0, 8, 8,
-                               self.display_surface.get_size()[0],
-                               self.display_surface.get_size()[1], 5)
+        self.grid = grid.Grid(self.display_surface, 0, 0, 8, 8,
+                              self.display_surface.get_size()[0],
+                              self.display_surface.get_size()[1], (0, 0, 0), (0, 255, 0), 0)
+        self.mouse_pos = pygame.mouse.get_pos()
+        self.lmb_down = False
 
     def on_loop(self):
-        pass
+        self.grid.update(self.display_surface, 0, 0, 8, 8,
+                         self.display_surface.get_size()[0],
+                         self.display_surface.get_size()[1], (0, 0, 0), (0, 255, 0), 0)
+
+        cell = self.grid.cell_by_pos(self.mouse_pos)
+        if cell:
+            if cell != self.grid.prev_cell:
+                cell.color = (
+                    random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+                cell.border_width = 0
+
+            self.grid.prev_cell = cell
 
     def on_render(self):
         self.display_surface.fill((255, 255, 255))
+        self.grid.draw()
         pygame.display.flip()
 
     def on_exit(self):
@@ -70,6 +84,15 @@ class App(cevent.CEvent):
             print(self.size)
             self.display_surface = pygame.display.set_mode(self.size,
                                                            pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
+
+    def on_lmb_down(self, event):
+        self.lmb_down = True
+
+    def on_lmb_up(self, event):
+        self.lmb_down = False
+
+    def on_mouse_move(self, event):
+        self.mouse_pos = pygame.mouse.get_pos()
 
     def on_resize(self, event):
         self.size = event.dict['size']

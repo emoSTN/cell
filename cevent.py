@@ -1,7 +1,3 @@
-import pygame
-from pygame.locals import *
-
-import pygame
 from pygame.locals import *
 
 
@@ -33,22 +29,22 @@ class CEvent:
     def on_mouse_wheel(self, event):
         pass
 
-    def on_lbutton_up(self, event):
+    def on_lmb_up(self, event):
         pass
 
-    def on_lbutton_down(self, event):
+    def on_lmb_down(self, event):
         pass
 
-    def on_rbutton_up(self, event):
+    def on_rmb_up(self, event):
         pass
 
-    def on_rbutton_down(self, event):
+    def on_rmb_down(self, event):
         pass
 
-    def on_mbutton_up(self, event):
+    def on_mmb_up(self, event):
         pass
 
-    def on_mbutton_down(self, event):
+    def on_mmb_down(self, event):
         pass
 
     def on_minimize(self):
@@ -106,21 +102,21 @@ class CEvent:
         elif event.type == MOUSEMOTION:
             self.on_mouse_move(event)
 
-        elif event.type == MOUSEBUTTONUP:
-            if event.button == 0:
-                self.on_lbutton_up(event)
-            elif event.button == 1:
-                self.on_mbutton_up(event)
-            elif event.button == 2:
-                self.on_rbutton_up(event)
-
         elif event.type == MOUSEBUTTONDOWN:
-            if event.button == 0:
-                self.on_lbutton_down(event)
-            elif event.button == 1:
-                self.on_mbutton_down(event)
+            if event.button == 1:
+                self.on_lmb_down(event)
             elif event.button == 2:
-                self.on_rbutton_down(event)
+                self.on_mmb_down(event)
+            elif event.button == 3:
+                self.on_rmb_down(event)
+
+        elif event.type == MOUSEBUTTONUP:
+            if event.button == 1:
+                self.on_lmb_up(event)
+            elif event.button == 2:
+                self.on_mmb_up(event)
+            elif event.button == 3:
+                self.on_rmb_up(event)
 
         elif event.type == ACTIVEEVENT:
             if event.state == 1:
