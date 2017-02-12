@@ -1,7 +1,9 @@
 import pygame
+from pygame import Rect
 import random
 
 import grid
+from grid import Dimensions, Address, Color, Point
 import cevent
 
 
@@ -16,16 +18,16 @@ class App(cevent.CEvent):
         self.display_surface = pygame.display.set_mode(self.size,
                                                        pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
         self.running = True
-        self.grid = grid.Grid(self.display_surface, 0, 0, 8, 8,
-                              self.display_surface.get_size()[0],
-                              self.display_surface.get_size()[1], (0, 0, 0), (0, 255, 0), 0)
+        rect = Rect((0, 0), self.display_surface.get_size())
+        self.grid = grid.Grid(self.display_surface, rect, Dimensions(8, 8),
+                              Color.black(), Color.green(), 0)
         self.mouse_pos = pygame.mouse.get_pos()
         self.lmb_down = False
 
     def on_loop(self):
-        self.grid.update(self.display_surface, 0, 0, 8, 8,
-                         self.display_surface.get_size()[0],
-                         self.display_surface.get_size()[1], (0, 0, 0), (0, 255, 0), 0)
+        rect = Rect((0, 0), self.display_surface.get_size())
+        self.grid.update(self.display_surface, rect, Dimensions(8, 8),
+                         Color.black(), Color.green(), 0)
 
         cell = self.grid.cell_by_pos(self.mouse_pos)
         if cell:
