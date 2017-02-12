@@ -1,17 +1,17 @@
-import pygame
-from pygame import Rect
 import random
 
-import grid
-from grid import Dimensions, Address, Color, Point
-import cevent
+import pygame
+from pygame import Rect
+
+from cevent import CEvent
+from grid import Dimensions, Color, Grid
 
 
-class App(cevent.CEvent):
-    def __init__(self):
+class App(CEvent):
+    def __init__(self, size=(640, 480)):
         self.running = True
         self.display_surface = None
-        self.size = self.weight, self.height = 640, 400
+        self.size = self.weight, self.height = size
         self.fps = 60
         self.clock = pygame.time.Clock()
         pygame.init()
@@ -19,27 +19,39 @@ class App(cevent.CEvent):
                                                        pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
         self.running = True
         rect = Rect((0, 0), self.display_surface.get_size())
-        self.grid = grid.Grid(self.display_surface, rect, Dimensions(8, 8),
-                              Color.black(), Color.green(), 0)
+        self.grid = Grid(self.display_surface, rect, Dimensions(32, 32),
+                         Color.black(), Color.green())
         self.mouse_pos = pygame.mouse.get_pos()
         self.lmb_down = False
 
     def on_loop(self):
         rect = Rect((0, 0), self.display_surface.get_size())
-        self.grid.update(self.display_surface, rect, Dimensions(8, 8),
-                         Color.black(), Color.green(), 0)
+        self.grid.update(self.display_surface, rect,
+                         Color.black(), Color.green())
+
+        for row in self.grid.cells:
+            for cell in row:
+                if cell != self.grid.cell_by_pos(self.mouse_pos):
+                    if cell.border_width == 0:
+                        if cell.color.r > 0:
+                            cell.color.r -= 1
+                        if cell.color.g > 0:
+                            cell.color.g -= 1
+                        if cell.color.b > 0:
+                            cell.color.b -= 1
+                    if cell.color.r == 0 and cell.color.g == 0 and cell.color.b == 0:
+                        cell.color = Color.green()
+                        cell.border_width = 1
 
         cell = self.grid.cell_by_pos(self.mouse_pos)
         if cell:
             if cell != self.grid.prev_cell:
-                cell.color = (
-                    random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+                cell.color = Color.random()
                 cell.border_width = 0
-
             self.grid.prev_cell = cell
 
     def on_render(self):
-        self.display_surface.fill((255, 255, 255))
+        self.display_surface.fill(Color.white().as_tuple())
         self.grid.draw()
         pygame.display.flip()
 
